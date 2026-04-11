@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llmops-api
+  namespace: llmops
+  labels:
+    app: llmops-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llmops-api
+  template:
+    metadata:
+      labels:
+        app: llmops-api
+    spec:
+      containers:
+        - name: api
+          image: llmops-api:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: llmops-secrets
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llmops-ui
+  namespace: llmops
+  labels:
+    app: llmops-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llmops-ui
+  template:
+    metadata:
+      labels:
+        app: llmops-ui
+    spec:
+      containers:
+        - name: ui
+          image: llmops-ui:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8501
+          command:
+            - streamlit
+            - run
+            - ui.py
+            - --server.port=8501
+            - --server.address=0.0.0.0

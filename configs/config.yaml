@@ -1,0 +1,25 @@
+data_source:
+  type: "web"
+  urls:
+    - "https://lilianweng.github.io/posts/2023-06-23-agent/"
+
+text_splitter:
+  chunk_size: 1000
+  chunk_overlap: 200
+
+embedding_model:
+  provider: "huggingface"
+  model_name: "sentence-transformers/all-MiniLM-L6-v2" 
+
+vector_store:
+  provider: "astra"
+  collection_name: "qa_mini_demo"
+
+retriever:
+  search_type: "similarity"   # matches your current as_retriever() default
+  top_k: 4                   # default LangChain behavior
+
+llm:
+  provider: "groq"
+  model_name: "llama-3.3-70b-versatile"
+  temperature: 0

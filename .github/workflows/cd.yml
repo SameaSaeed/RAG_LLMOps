@@ -1,0 +1,112 @@
+name: Deploy to Minikube
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+env:
+  NAMESPACE: llmops
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # ------------------------
+      # Start Minikube
+      # ------------------------
+      - name: Setup Minikube
+        uses: manusa/actions-setup-minikube@v2.13.0
+        with:
+          minikube version: v1.36.0
+          kubernetes version: v1.32.0
+          driver: docker
+
+      - name: Verify cluster
+        run: kubectl get nodes
+
+      # ------------------------
+      # Build images INSIDE Minikube
+      # ------------------------
+      
+      - name: Use Minikube Docker
+        run: eval $(minikube docker-env)
+        
+      - name: Build API image
+        run: |
+            eval $(minikube docker-env)
+            docker build -t llmops-api:latest -f Dockerfile .
+
+      - name: Build UI image
+        run: |
+          eval $(minikube docker-env)
+          docker build -t llmops-ui:latest -f Dockerfile.ui .
+
+      # ------------------------
+      # Namespace
+      # ------------------------
+      - name: Create namespace
+        run: |
+          kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+
+      # ------------------------
+      # Secrets
+      # ------------------------
+      - name: Create secrets
+        run: |
+          kubectl create secret generic llmops-secrets \
+            -n $NAMESPACE \
+            --from-literal=groq-api-key="${{ secrets.GROQ_API_KEY }}" \
+            --from-literal=astra-token="${{ secrets.ASTRA_DB_APPLICATION_TOKEN }}" \
+            --from-literal=astra-db-id="${{ secrets.ASTRA_DB_ID }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      # ------------------------
+      # Deploy K8s
+      # ------------------------
+      - name: Deploy manifests
+        run: kubectl apply -f K8s/ -n $NAMESPACE
+
+      # ------------------------
+      # Wait for rollout
+      # ------------------------
+      - name: Wait for API
+        run: kubectl rollout status deployment/llmops-api -n $NAMESPACE --timeout=300s || true
+
+      - name: Wait for UI
+        run: kubectl rollout status deployment/llmops-ui -n $NAMESPACE --timeout=300s || true
+
+      # ------------------------
+      # DEBUG LOGS (FIXED)
+      # ------------------------
+
+      - name: Get API pod name
+        if: always()
+        run: |
+          POD=$(kubectl get pods -n $NAMESPACE -l app=llmops-api -o jsonpath="{.items[0].metadata.name}")
+          echo "API Pod: $POD"
+          kubectl logs -n $NAMESPACE $POD --tail=200 || true
+
+      - name: Get UI pod name
+        if: always()
+        run: |
+          POD=$(kubectl get pods -n $NAMESPACE -l app=llmops-ui -o jsonpath="{.items[0].metadata.name}")
+          echo "UI Pod: $POD"
+          kubectl logs -n $NAMESPACE $POD --tail=200 || true
+
+      - name: Describe Pods (Debug)
+        if: always()
+        run: |
+          kubectl get pods -n $NAMESPACE -o wide
+          kubectl describe pods -n $NAMESPACE || true
+
+      # ------------------------
+      # Status
+      # ------------------------
+      - name: Show cluster state
+        run: |
+          kubectl get all -n $NAMESPACE

@@ -1,0 +1,53 @@
+[project]
+name = "llmops"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "python-dotenv==1.1.1",
+    "structlog",
+    "pydantic",
+    "PyYAML",
+    "streamlit",
+    "requests",
+    "langchain==0.3.27",
+    "langchain-core==0.3.72",
+    "langchain-community==0.3.27",
+    "langchain-text-splitters",
+    "langchain-groq==0.3.6",
+    "langchain-google-genai==2.1.8",
+    "langchain-openai==0.2.10",
+    "docx2txt==0.9",
+    "ipykernel==6.30.0",
+    "python-multipart==0.0.20",
+    "faiss-cpu",
+    "fastapi==0.115.6",
+    "uvicorn==0.32.1",
+    "Jinja2==3.1.4",
+    "langsmith",
+    "openai",
+    "pandas",
+    "ragas",
+    "pytest",
+    "pytest-asyncio",
+    "numpy",
+    "scikit-learn",
+]
+
+[project.optional-dependencies]
+eval = [
+    "ragas",
+    "pytest",
+    "pytest-asyncio",
+    "jupyter",
+]
+dev = [
+    "black",
+    "isort",
+    "flake8",
+    "mypy",
+    "bandit",
+    "pytest",
+    "pytest-cov",
+]

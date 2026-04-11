@@ -1,0 +1,58 @@
+{
+  "samples": [
+    {
+      "question": "What is Retrieval-Augmented Generation?",
+      "answer": "Retrieval-Augmented Generation (RAG) is a machine learning technique that combines information retrieval with generative models. It first retrieves relevant documents or passages from a knowledge base, then uses those retrieved contexts to enhance the generation of accurate and contextually relevant answers.",
+      "contexts": [
+        "RAG combines two main components: a retriever that fetches relevant documents and a generator that produces answers based on those documents",
+        "RAG improves the accuracy of generated text by grounding it in retrieved information",
+        "RAG is particularly useful for question-answering systems and knowledge-intensive tasks"
+      ],
+      "ground_truth": "A technique combining retrieval and generation for improved question answering"
+    },
+    {
+      "question": "How does the retrieval component work in RAG?",
+      "answer": "The retrieval component in RAG uses vector similarity search to find relevant documents. It encodes the query into embeddings and searches a vector database for the most similar document embeddings, returning the top-k most relevant documents.",
+      "contexts": [
+        "Vector embeddings encode semantic meaning of text",
+        "Similarity search compares query embeddings with stored document embeddings",
+        "The retriever ranks documents by relevance score and returns top results"
+      ],
+      "ground_truth": "Vector similarity search to find relevant documents from a knowledge base"
+    },
+    {
+      "question": "What are the benefits of using RAG?",
+      "answer": "RAG provides several benefits including: improved answer accuracy by leveraging external knowledge, reduced hallucination through grounding in real documents, cost-effectiveness by using smaller models, and the ability to update knowledge without retraining.",
+      "contexts": [
+        "Grounding outputs in retrieved documents reduces model hallucinations",
+        "RAG reduces computational costs compared to fine-tuning large models",
+        "Knowledge bases can be updated independently of the generation model",
+        "RAG improves factuality and relevance of generated responses"
+      ],
+      "ground_truth": "Improved accuracy, reduced hallucinations, cost-effective, easy knowledge updates"
+    },
+    {
+      "question": "What is LangChain?",
+      "answer": "LangChain is a framework for developing applications powered by large language models. It provides tools and abstractions for working with LLMs, including prompt management, memory, chains, agents, and integration with various data sources and APIs.",
+      "contexts": [
+        "LangChain provides building blocks for LLM applications like chains and agents",
+        "LangChain abstracts interactions with different LLM providers",
+        "LangChain includes memory management, prompt templates, and document loaders",
+        "LangChain supports retrieval and other downstream tools"
+      ],
+      "ground_truth": "A framework for building LLM-powered applications"
+    },
+    {
+      "question": "What evaluation metrics are used in RAG systems?",
+      "answer": "Common RAG evaluation metrics include faithfulness which measures if the answer is grounded in the context, answer relevancy which checks if the answer addresses the question, context relevancy which measures if retrieved contexts are relevant to the question, context precision which measures the proportion of relevant contexts, and context recall which measures coverage of necessary information.",
+      "contexts": [
+        "Faithfulness measures whether generated answers are supported by the retrieved context",
+        "Answer relevancy evaluates how well the answer addresses the user's question",
+        "Context relevancy measures the semantic alignment between question and retrieved documents",
+        "Context precision is the percentage of retrieved documents that are relevant to the query",
+        "Context recall measures what percentage of required information was retrieved"
+      ],
+      "ground_truth": "Faithfulness, answer relevancy, context relevancy, context precision, context recall"
+    }
+  ]
+}
