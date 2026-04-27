@@ -8,7 +8,6 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from utils.model_loader import ModelLoader
 from configs.prompts import PROMPT_REGISTRY
-from configs.models import PromptType
 from configs.exceptions import DocumentPortalException
 
 
@@ -23,9 +22,9 @@ class ConversationalRAG:
         self.llm = ModelLoader().load_llm()
         self.chain = None
 
-        # Prompts
-        self.contextualize_prompt: ChatPromptTemplate = PROMPT_REGISTRY[PromptType.CONTEXTUALIZE_QUESTION.value]
-        self.qa_prompt: ChatPromptTemplate = PROMPT_REGISTRY[PromptType.CONTEXT_QA.value]
+        # Prompts - FIX: Use string keys instead of PromptType enum
+        self.contextualize_prompt: ChatPromptTemplate = PROMPT_REGISTRY["contextualize_question"]
+        self.qa_prompt: ChatPromptTemplate = PROMPT_REGISTRY["context_qa"]
 
     def load_retriever(self, table_name: str, k: int = 5):
         """
